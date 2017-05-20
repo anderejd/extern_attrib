@@ -21,7 +21,6 @@ mod tests {
         #[cfg(not(target_os = "windows"))]
         let f: extern "C" fn() -> i32 = modified_by_attrib;
 
-        //let i = modified_by_attrib();
         assert!(f() == 3)
     }
 }
