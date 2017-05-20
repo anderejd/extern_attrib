@@ -2,6 +2,12 @@
 name = "extern_attrib"
 version = "0.1.0"
 authors = ["anderejd <rajder@gmail.com>"]
+description = "Rust automatic ABI attribute macro: #[extern_auto]"
+repository = "https://github.com/anderejd/extern_attrib"
+readme = "README.md"
+keywords = ["ffi", "extern", "abi"]
+categories = ["development-tools::ffi"]
+license = "MIT"
 
 [lib]
 proc-macro = true
