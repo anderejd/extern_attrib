@@ -1,4 +1,15 @@
-//! TODO: Study and do proper procedural macro error handling.
+//! # extern_attrib
+//! Rust automatic ABI attribute macro: #[extern_auto]
+//! 
+//! The purpose of this library is to replace or insert the ABI name at compile time for functions.
+//! This is useful for hiding the calling convention for FFI callbacks while avoiding code duplication.
+//! 
+//! - __Requires nightly rust__, depends on #[proc_macro_attribute].
+//! - Currenly only handles target_os = "windows" / "macos" / "linux".
+//! - See the tests/tests.rs for a usage example.
+//! - Pull Requests Welcome!
+//! 
+//! TODO: Investigate how error handling should best be done in procedural macros.
 #![feature(proc_macro)]
 
 extern crate proc_macro;
@@ -14,8 +25,13 @@ use syn::ItemKind;
 #[proc_macro_attribute]
 pub fn extern_auto(_: TokenStream, input: TokenStream) -> TokenStream {
     let src = input.to_string();
-    let err_str = "Attribute extern_auto is only supported on functions.";
-    let mut item = syn::parse_item(&src).expect(err_str);
+    let mut item = match syn::parse_item(&src) {
+        Ok(i) => i,
+        Err(e) => {
+            eprintln!("Parse error in extern_auto: {}", e);
+            return input // Let rustc handle syntax errors.
+        }
+    };
     { //! This scope drops abi_opt after mutation.
         let abi_opt = match item.node {
             ItemKind::Fn(_, _, _, ref mut opt, _, _) => opt,

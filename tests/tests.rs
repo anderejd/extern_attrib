@@ -6,21 +6,25 @@ mod tests {
     use extern_attrib::extern_auto;
 
     #[test]
-    fn extern_auto_resolves_as_expected() {
+    fn extern_auto_sets_the_target_os_ffi_abi() {
+        let i = 1234;
+
+        /// This function should be modified by the extern_auto
+        /// macro, to the appropriate FFI ABI for the target_os.
         #[extern_auto]
         #[cfg(not(extra_attrib_to_make_things_harder = "for the procedural macro"))]
-        extern "Rust" fn modified_by_attrib() -> i32 {
-            1 + 2
+        fn modified_by_attrib(i: i32) -> i32 {
+            i * i
         }
 
-        /// Expect build failure if extern_auto is incorrect.
+        /// This should cause build failure if extern_auto is incorrect.
         #[cfg(target_os = "windows")]
-        let f: extern "stdcall" fn() -> i32 = modified_by_attrib;
+        let f: extern "stdcall" fn(i: i32) -> i32 = modified_by_attrib;
 
-        /// Expect build failure if extern_auto is incorrect.
+        /// This should cause build failure if extern_auto is incorrect.
         #[cfg(not(target_os = "windows"))]
-        let f: extern "C" fn() -> i32 = modified_by_attrib;
+        let f: extern "C" fn(i: i32) -> i32 = modified_by_attrib;
 
-        assert!(f() == 3)
+        assert!(f(i) == i * i)
     }
 }
