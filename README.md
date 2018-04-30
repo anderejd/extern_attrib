@@ -1,3 +1,8 @@
+This is an archived experiment, please don't use it.
+====================================================
+
+
+
 # extern_attrib
 Rust automatic ABI attribute macro: #[extern_auto]
 
